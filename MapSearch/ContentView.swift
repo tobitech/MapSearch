@@ -100,11 +100,9 @@ struct ContentView: View {
   
   var body: some View {
     Map(
-      coordinateRegion: .constant(
-        .init(
-          center: .init(latitude: 40.7, longitude: -74),
-          span: .init(latitudeDelta: 0.075, longitudeDelta: 0.075)
-        )
+      coordinateRegion: self.viewStore.binding(
+        get: \.region.rawValue,
+        send: { .regionChanged(.init(rawValue: $0)) }
       )
 //      interactionModes: <#T##MapInteractionModes#>,
 //      showsUserLocation: <#T##Bool#>,
@@ -113,7 +111,10 @@ struct ContentView: View {
 //      annotationContent: <#T##(Identifiable) -> MapAnnotationProtocol#>
     )
     .searchable(
-      text: .constant("")
+      text: self.viewStore.binding(
+        get: \.query,
+        send: AppAction.queryChanged
+      )
 //      placement: <#T##SearchFieldPlacement#>,
 //      prompt: <#T##LocalizedStringKey#>,
 //      suggestions: <#T##() -> View#>
