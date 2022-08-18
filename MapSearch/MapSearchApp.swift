@@ -18,7 +18,9 @@ struct MapSearchApp: App {
             initialState: AppState(),
             // this automatically prints when an action is sent to the store.
             reducer: appReducer.debugActions(),
-            environment: AppEnvironment()
+            environment: AppEnvironment(
+              localSearchCompleter: .live
+            )
           )
         )
       }

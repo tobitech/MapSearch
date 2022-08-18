@@ -61,6 +61,7 @@ extension CoordinateSpan {
 }
 
 struct AppState: Equatable {
+  var completions: [MKLocalSearchCompletion] = []
   var query = ""
   var region = CoordinateRegion(
     center: .init(latitude: 40.7, longitude: -74),
@@ -69,18 +70,36 @@ struct AppState: Equatable {
 }
 
 enum AppAction {
+  case completionsUpdated(Result<[MKLocalSearchCompletion], Error>)
+  case onAppear
   case queryChanged(String)
   case regionChanged(CoordinateRegion)
 }
 
 struct AppEnvironment {
+  var localSearchCompleter: LocalSearchCompleter
 }
 
-let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, _ in
+let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, environment in
   switch action {
+  case let .completionsUpdated(.success(completions)):
+    state.completions = completions
+    return .none
+    
+  case let .completionsUpdated(.failure(error)):
+    // TODO: error handling
+    return .none
+    
+    // one of the best places to execute long-living effects is in view onappear
+  case .onAppear:
+    return environment.localSearchCompleter.completions()
+      .map(AppAction.completionsUpdated)
+    
   case let .queryChanged(query):
     state.query = query
-    return .none
+    return environment.localSearchCompleter
+      .search(query)
+      .fireAndForget()
     
   case let .regionChanged(region):
     state.region = region
@@ -125,6 +144,9 @@ struct ContentView: View {
     }
     .navigationBarTitle("Places", displayMode: .inline)
     .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      self.viewStore.send(.onAppear)
+    }
   }
 }
 
@@ -135,7 +157,9 @@ struct ContentView_Previews: PreviewProvider {
         store: Store(
           initialState: AppState(),
           reducer: appReducer,
-          environment: AppEnvironment()
+          environment: AppEnvironment(
+            localSearchCompleter: .live
+          )
         )
       )
     }
