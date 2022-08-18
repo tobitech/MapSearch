@@ -20,6 +20,7 @@
 		204A0E4528AE4D7F00F17CD3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		204A0E4728AE4D8000F17CD3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204A0E4A28AE4D8000F17CD3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		204A0E5428AE651C00F17CD3 /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +38,7 @@
 		204A0E3728AE4D7E00F17CD3 = {
 			isa = PBXGroup;
 			children = (
+				204A0E5428AE651C00F17CD3 /* Playground.playground */,
 				204A0E4228AE4D7F00F17CD3 /* MapSearch */,
 				204A0E4128AE4D7F00F17CD3 /* Products */,
 			);
