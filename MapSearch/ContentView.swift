@@ -144,9 +144,68 @@ struct ContentView: View {
 //      suggestions: <#T##() -> View#>
     ) {
       if self.viewStore.query.isEmpty {
-        Text("Apple Store")
-        Text("Cafe")
-        Text("Library")
+        HStack {
+          Text("Recent Searches")
+          Spacer()
+          Button(action: {}) {
+            Text("See all")
+          }
+        }
+        .font(.callout)
+        
+        HStack {
+          Image(systemName: "magnifyingglass")
+          Text("Apple • New York")
+          Spacer()
+        }
+        HStack {
+          Image(systemName: "magnifyingglass")
+          Text("Apple • New York")
+          Spacer()
+        }
+        HStack {
+          Image(systemName: "magnifyingglass")
+          Text("Apple • New York")
+          Spacer()
+        }
+        
+        HStack {
+          Text("Find nearby")
+          Spacer()
+          Button(action: {}) {
+            Text("See all")
+          }
+        }
+        .padding(.top)
+        .font(.callout)
+        
+        ScrollView(.horizontal) {
+          HStack {
+            ForEach(1...2, id: \.self) { _ in
+              VStack {
+                ForEach(1...2, id: \.self) { _ in
+                  HStack {
+                    Image(systemName: "bag.circle.fill")
+                      .foregroundStyle(Color.white, Color.red)
+                      .font(.title)
+                    Text("Shopping")
+                  }
+                  .padding([.top, .bottom, .trailing],  4)
+                }
+              }
+            }
+          }
+        }
+        
+        HStack {
+          Text("Editors’ picks")
+          Spacer()
+          Button(action: {}) {
+            Text("See all")
+          }
+        }
+        .padding(.top)
+        .font(.callout)
       } else {
         ForEach(self.viewStore.completions, id: \.id) { completion in
           VStack(alignment: .leading) {
