@@ -96,6 +96,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
       .map(AppAction.completionsUpdated)
     
   case let .queryChanged(query):
+    // state.completions = []
     state.query = query
     return environment.localSearchCompleter
       .search(query)
@@ -107,10 +108,14 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   }
 }
 
+extension MKLocalSearchCompletion {
+  public var id: [String] { [self.title, self.subtitle] }
+}
+
 struct ContentView: View {
   
   let store: Store<AppState, AppAction>
-  let viewStore: ViewStore<AppState, AppAction>
+  @ObservedObject var viewStore: ViewStore<AppState, AppAction>
   
   init(store: Store<AppState, AppAction>) {
     self.store = store
@@ -138,9 +143,19 @@ struct ContentView: View {
 //      prompt: <#T##LocalizedStringKey#>,
 //      suggestions: <#T##() -> View#>
     ) {
-      Text("Apple Store")
-      Text("Cafe")
-      Text("Library")
+      if self.viewStore.query.isEmpty {
+        Text("Apple Store")
+        Text("Cafe")
+        Text("Library")
+      } else {
+        ForEach(self.viewStore.completions, id: \.id) { completion in
+          VStack(alignment: .leading) {
+            Text(completion.title)
+            Text(completion.subtitle)
+              .font(.caption)
+          }
+        }
+      }
     }
     .navigationBarTitle("Places", displayMode: .inline)
     .ignoresSafeArea(edges: .bottom)
