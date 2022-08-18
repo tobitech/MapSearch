@@ -9,28 +9,60 @@ import ComposableArchitecture
 import MapKit
 import SwiftUI
 
-// Not advisable to add conformance to 3rd party frameworks.
-extension MKCoordinateRegion: Equatable {
-  public static func == (lhs: MKCoordinateRegion, rhs: MKCoordinateRegion) -> Bool {
-    lhs.center == rhs.center && lhs.span == rhs.span
+struct CoordinateRegion: Equatable {
+  var center = LocationCoordinate2D()
+  var span = CoordinateSpan()
+}
+
+extension CoordinateRegion {
+  init(rawValue: MKCoordinateRegion) {
+    self.init(
+      center: .init(rawValue: rawValue.center),
+      span: .init(rawValue: rawValue.span)
+    )
+  }
+  
+  var rawValue: MKCoordinateRegion {
+    .init(
+      center: self.center.rawValue,
+      span: self.span.rawValue
+    )
   }
 }
 
-extension CLLocationCoordinate2D: Equatable {
-  public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+struct LocationCoordinate2D: Equatable {
+  var latitude: CLLocationDegrees = 0
+  var longitude: CLLocationDegrees = 0
+}
+
+extension LocationCoordinate2D {
+  init(rawValue: CLLocationCoordinate2D) {
+    self.init(latitude: rawValue.latitude, longitude: rawValue.longitude)
+  }
+  
+  var rawValue: CLLocationCoordinate2D {
+    .init(latitude: self.latitude, longitude: self.longitude)
   }
 }
 
-extension MKCoordinateSpan: Equatable {
-  public static func == (lhs: MKCoordinateSpan, rhs: MKCoordinateSpan) -> Bool {
-    lhs.latitudeDelta == rhs.latitudeDelta && lhs.longitudeDelta == rhs.longitudeDelta
+struct CoordinateSpan: Equatable {
+  var latitudeDelta: CLLocationDegrees = 0
+  var longitudeDelta: CLLocationDegrees = 0
+}
+
+extension CoordinateSpan {
+  init(rawValue: MKCoordinateSpan) {
+    self.init(latitudeDelta: rawValue.latitudeDelta, longitudeDelta: rawValue.longitudeDelta)
+  }
+  
+  var rawValue: MKCoordinateSpan {
+    .init(latitudeDelta: self.latitudeDelta, longitudeDelta: self.longitudeDelta)
   }
 }
 
 struct AppState: Equatable {
   var query = ""
-  var region = MKCoordinateRegion(
+  var region = CoordinateRegion(
     center: .init(latitude: 40.7, longitude: -74),
     span: .init(latitudeDelta: 0.075, longitudeDelta: 0.075)
   )
@@ -38,7 +70,7 @@ struct AppState: Equatable {
 
 enum AppAction {
   case queryChanged(String)
-  case regionChanged(MKCoordinateRegion)
+  case regionChanged(CoordinateRegion)
 }
 
 struct AppEnvironment {
