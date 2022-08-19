@@ -70,12 +70,12 @@ struct AppState: Equatable {
   )
 }
 
-enum AppAction {
-  case completionsUpdated(Result<[MKLocalSearchCompletion], Error>)
+enum AppAction: Equatable {
+  case completionsUpdated(Result<[MKLocalSearchCompletion], NSError>)
   case onAppear
   case queryChanged(String)
   case regionChanged(CoordinateRegion)
-  case searchResponse(Result<MKLocalSearch.Response, Error>)
+  case searchResponse(Result<MKLocalSearch.Response, NSError>)
   case tappedCompletion(MKLocalSearchCompletion)
 }
 
@@ -98,6 +98,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
     // one of the best places to execute long-living effects is in view onappear
   case .onAppear:
     return environment.localSearchCompleter.completions()
+      .map { $0.mapError { $0 as NSError } }
       .map(AppAction.completionsUpdated)
     
   case let .queryChanged(query):
@@ -123,6 +124,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   case let .tappedCompletion(completion):
     return environment.localSearch
       .search(completion)
+      .mapError { $0 as NSError }
       .receive(on: environment.mainQueue.animation())
       .catchToEffect()
       .map(AppAction.searchResponse)

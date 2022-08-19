@@ -29,9 +29,23 @@ class MapSearchTests: XCTestCase {
     
     store.environment.localSearchCompleter.completions = { completions.eraseToEffect()
     }
+    let completion = MKLocalSearchCompletion()
+    store.environment.localSearchCompleter.search = { query in
+        .fireAndForget {
+          completions.send(.success([completion]))
+        }
+    }
     defer { completions.send(completion: .finished) }
     
     store.send(.onAppear)
+    
+    store.send(.queryChanged("Apple")) {
+      $0.query = "Apple"
+    }
+    
+    store.receive(.completionsUpdated(.success([completion]))) {
+      $0.completions = [completion]
+    }
   }
   
 }
