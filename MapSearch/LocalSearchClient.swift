@@ -2,7 +2,7 @@ import ComposableArchitecture
 import MapKit
 
 struct LocalSearchClient {
-  var search: (MKLocalSearchCompletion) -> Effect<MKLocalSearch.Response, Error>
+  var search: (LocalSearchCompletion) -> Effect<MKLocalSearch.Response, Error>
 }
 
 extension LocalSearchClient {
@@ -10,7 +10,10 @@ extension LocalSearchClient {
     search: { completion in
       
       Effect.task {
-        try await MKLocalSearch(request: .init(completion: completion))
+        // we're force unwrapping here because the rawValue should not be nil in production code, only in test code can it be nil
+        // and this code is not run in test
+        // we can also make the initializer that takes rawValue as the only public initializer while the other init method is made internal for test to access.
+        try await MKLocalSearch(request: .init(completion: completion.rawValue!))
           .start()
       }
       

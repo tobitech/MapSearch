@@ -15,7 +15,7 @@ class MapSearchTests: XCTestCase {
   
   func testExample() {
     
-    let completions = PassthroughSubject<Result<[MKLocalSearchCompletion], Error>, Never>()
+    let completions = PassthroughSubject<Result<[LocalSearchCompletion], Error>, Never>()
     
     let store = TestStore(
       initialState: AppState(),
@@ -29,7 +29,7 @@ class MapSearchTests: XCTestCase {
     
     store.environment.localSearchCompleter.completions = { completions.eraseToEffect()
     }
-    let completion = MKLocalSearchCompletion()
+    let completion = LocalSearchCompletion(title: "Apple Store", subtitle: "Search Nearby")
     store.environment.localSearchCompleter.search = { query in
         .fireAndForget {
           completions.send(.success([completion]))

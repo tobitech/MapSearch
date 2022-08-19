@@ -61,7 +61,7 @@ extension CoordinateSpan {
 }
 
 struct AppState: Equatable {
-  var completions: [MKLocalSearchCompletion] = []
+  var completions: [LocalSearchCompletion] = []
   var mapItems: [MKMapItem] = []
   var query = ""
   var region = CoordinateRegion(
@@ -71,12 +71,12 @@ struct AppState: Equatable {
 }
 
 enum AppAction: Equatable {
-  case completionsUpdated(Result<[MKLocalSearchCompletion], NSError>)
+  case completionsUpdated(Result<[LocalSearchCompletion], NSError>)
   case onAppear
   case queryChanged(String)
   case regionChanged(CoordinateRegion)
   case searchResponse(Result<MKLocalSearch.Response, NSError>)
-  case tappedCompletion(MKLocalSearchCompletion)
+  case tappedCompletion(LocalSearchCompletion)
 }
 
 struct AppEnvironment {
@@ -131,7 +131,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   }
 }
 
-extension MKLocalSearchCompletion {
+extension LocalSearchCompletion: Identifiable {
   public var id: [String] { [self.title, self.subtitle] }
 }
 
@@ -238,7 +238,7 @@ struct ContentView: View {
         .padding(.top)
         .font(.callout)
       } else {
-        ForEach(self.viewStore.completions, id: \.id) { completion in
+        ForEach(self.viewStore.completions) { completion in
           Button(action: { self.viewStore.send(.tappedCompletion(completion)) }) {
             VStack(alignment: .leading) {
               Text(completion.title)

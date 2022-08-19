@@ -4,7 +4,7 @@ import MapKit
 
 struct LocalSearchCompleter {
   // var search: (String) -> Effect<[MKLocalSearchCompletion], Error>
-  var completions: () -> Effect<Result<[MKLocalSearchCompletion], Error>, Never>
+  var completions: () -> Effect<Result<[LocalSearchCompletion], Error>, Never>
   var search: (String) -> Effect<Never, Never>
 }
 
@@ -13,14 +13,14 @@ extension LocalSearchCompleter {
     
     class Delegate: NSObject, MKLocalSearchCompleterDelegate {
       
-      let subscriber: Effect<Result<[MKLocalSearchCompletion], Error>, Never>.Subscriber
+      let subscriber: Effect<Result<[LocalSearchCompletion], Error>, Never>.Subscriber
       
-      init(subscriber: Effect<Result<[MKLocalSearchCompletion], Error>, Never>.Subscriber) {
+      init(subscriber: Effect<Result<[LocalSearchCompletion], Error>, Never>.Subscriber) {
         self.subscriber = subscriber
       }
       
       func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        self.subscriber.send(.success(completer.results))
+        self.subscriber.send(.success(completer.results.map (LocalSearchCompletion.init)))
       }
       
       func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
@@ -53,5 +53,27 @@ extension LocalSearchCompleter {
           }
       }
     )
+  }
+}
+
+struct LocalSearchCompletion: Equatable {
+  var rawValue: MKLocalSearchCompletion?
+  
+  var title: String
+  var subtitle: String
+  
+  init(rawValue: MKLocalSearchCompletion) {
+    self.rawValue = rawValue
+    self.title = rawValue.title
+    self.subtitle = rawValue.subtitle
+  }
+  
+  init(title: String, subtitle: String) {
+    self.title = title
+    self.subtitle = subtitle
+  }
+  
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.title == rhs.title && lhs.subtitle == rhs.subtitle
   }
 }
