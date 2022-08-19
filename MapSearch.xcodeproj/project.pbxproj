@@ -13,6 +13,7 @@
 		204A0E4B28AE4D8000F17CD3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204A0E4A28AE4D8000F17CD3 /* Preview Assets.xcassets */; };
 		204A0E5328AE528300F17CD3 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 204A0E5228AE528300F17CD3 /* ComposableArchitecture */; };
 		2074A15228AE683F0081FEDA /* LocalSearchCompleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2074A15128AE683F0081FEDA /* LocalSearchCompleter.swift */; };
+		20FF476628AF9635007A371A /* LocalSearchClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FF476528AF9635007A371A /* LocalSearchClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		204A0E4A28AE4D8000F17CD3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		204A0E5428AE651C00F17CD3 /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		2074A15128AE683F0081FEDA /* LocalSearchCompleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSearchCompleter.swift; sourceTree = "<group>"; };
+		20FF476528AF9635007A371A /* LocalSearchClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSearchClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			children = (
 				204A0E4528AE4D7F00F17CD3 /* ContentView.swift */,
 				204A0E4328AE4D7F00F17CD3 /* MapSearchApp.swift */,
+				20FF476528AF9635007A371A /* LocalSearchClient.swift */,
 				2074A15128AE683F0081FEDA /* LocalSearchCompleter.swift */,
 				204A0E4728AE4D8000F17CD3 /* Assets.xcassets */,
 				204A0E4928AE4D8000F17CD3 /* Preview Content */,
@@ -152,6 +155,7 @@
 			files = (
 				204A0E4628AE4D7F00F17CD3 /* ContentView.swift in Sources */,
 				2074A15228AE683F0081FEDA /* LocalSearchCompleter.swift in Sources */,
+				20FF476628AF9635007A371A /* LocalSearchClient.swift in Sources */,
 				204A0E4428AE4D7F00F17CD3 /* MapSearchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
