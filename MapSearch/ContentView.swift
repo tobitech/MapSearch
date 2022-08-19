@@ -62,6 +62,7 @@ extension CoordinateSpan {
 
 struct AppState: Equatable {
   var completions: [MKLocalSearchCompletion] = []
+  var mapItems: [MKMapItem] = []
   var query = ""
   var region = CoordinateRegion(
     center: .init(latitude: 40.7, longitude: -74),
@@ -74,9 +75,12 @@ enum AppAction {
   case onAppear
   case queryChanged(String)
   case regionChanged(CoordinateRegion)
+  case searchResponse(Result<MKLocalSearch.Response, Error>)
+  case tappedCompletion(MKLocalSearchCompletion)
 }
 
 struct AppEnvironment {
+  var localSearch: LocalSearchClient
   var localSearchCompleter: LocalSearchCompleter
 }
 
@@ -105,6 +109,21 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   case let .regionChanged(region):
     state.region = region
     return .none
+    
+  case let .searchResponse(.success(response)):
+    state.region = .init(rawValue: response.boundingRegion)
+    state.mapItems = response.mapItems
+    return .none
+    
+  case let .searchResponse(.failure(error)):
+    // TODO: error handling
+    return .none
+    
+  case let .tappedCompletion(completion):
+    return environment.localSearch
+      .search(completion)
+      .catchToEffect()
+      .map(AppAction.searchResponse)
   }
 }
 
@@ -208,10 +227,12 @@ struct ContentView: View {
         .font(.callout)
       } else {
         ForEach(self.viewStore.completions, id: \.id) { completion in
-          VStack(alignment: .leading) {
-            Text(completion.title)
-            Text(completion.subtitle)
-              .font(.caption)
+          Button(action: { self.viewStore.send(.tappedCompletion(completion)) }) {
+            VStack(alignment: .leading) {
+              Text(completion.title)
+              Text(completion.subtitle)
+                .font(.caption)
+            }
           }
         }
       }
@@ -232,6 +253,7 @@ struct ContentView_Previews: PreviewProvider {
           initialState: AppState(),
           reducer: appReducer,
           environment: AppEnvironment(
+            localSearch: .live,
             localSearchCompleter: .live
           )
         )
