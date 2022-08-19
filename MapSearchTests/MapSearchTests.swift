@@ -23,7 +23,7 @@ class MapSearchTests: XCTestCase {
       environment: AppEnvironment(
         localSearch: .failing,
         localSearchCompleter: .failing,
-        mainQueue: .failing
+        mainQueue: .immediate
       )
     )
     
@@ -35,6 +35,19 @@ class MapSearchTests: XCTestCase {
           completions.send(.success([completion]))
         }
     }
+    let response = LocalSearchClient.Response(
+      boundingRegion: .init(
+        center: .init(latitude: 0, longitude: 0),
+        span: .init(latitudeDelta: 1, longitudeDelta: 1)),
+      // the reason this worked fine with Equatable is because we previously conformed it to Identifiable, this is not ideal
+      // Check episode exercise to see how a wrapper was made around this.
+      mapItems: [MKMapItem()]
+    )
+    store.environment.localSearch.search = { _ in
+      .init(
+        value: response
+      )
+    }
     defer { completions.send(completion: .finished) }
     
     store.send(.onAppear)
@@ -45,6 +58,13 @@ class MapSearchTests: XCTestCase {
     
     store.receive(.completionsUpdated(.success([completion]))) {
       $0.completions = [completion]
+    }
+    
+    store.send(.tappedCompletion(completion))
+    
+    store.receive(.searchResponse(.success(response))) {
+      $0.region = response.boundingRegion
+      $0.mapItems = response.mapItems
     }
   }
   

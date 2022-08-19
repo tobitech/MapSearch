@@ -75,7 +75,7 @@ enum AppAction: Equatable {
   case onAppear
   case queryChanged(String)
   case regionChanged(CoordinateRegion)
-  case searchResponse(Result<MKLocalSearch.Response, NSError>)
+  case searchResponse(Result<LocalSearchClient.Response, NSError>)
   case tappedCompletion(LocalSearchCompletion)
 }
 
@@ -113,7 +113,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
     return .none
     
   case let .searchResponse(.success(response)):
-    state.region = .init(rawValue: response.boundingRegion)
+    state.region = response.boundingRegion
     state.mapItems = response.mapItems
     return .none
     
