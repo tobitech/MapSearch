@@ -123,7 +123,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   case let .tappedCompletion(completion):
     return environment.localSearch
       .search(completion)
-      .receive(on: environment.mainQueue)
+      .receive(on: environment.mainQueue.animation())
       .catchToEffect()
       .map(AppAction.searchResponse)
   }
