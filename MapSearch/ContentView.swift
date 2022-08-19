@@ -131,6 +131,12 @@ extension MKLocalSearchCompletion {
   public var id: [String] { [self.title, self.subtitle] }
 }
 
+// Ideally we would create our own object that wraps around this so that we can define what Identifiable is rather than adding a conformance to a 3rd party model.
+// we're doing this just to get things compiling for now.
+// Because MKMapItem is a class subclasses NSObject we get the Identifiable implementation for free without doing anything!
+// But really there is not guarantee that the items will be unique this way, that's the more reason why we need our own object.
+extension MKMapItem: Identifiable {}
+
 struct ContentView: View {
   
   let store: Store<AppState, AppAction>
@@ -146,12 +152,14 @@ struct ContentView: View {
       coordinateRegion: self.viewStore.binding(
         get: \.region.rawValue,
         send: { .regionChanged(.init(rawValue: $0)) }
-      )
+      ),
 //      interactionModes: <#T##MapInteractionModes#>,
 //      showsUserLocation: <#T##Bool#>,
 //      userTrackingMode: <#T##Binding<MapUserTrackingMode>?#>,
-//      annotationItems: <#T##RandomAccessCollection#>,
-//      annotationContent: <#T##(Identifiable) -> MapAnnotationProtocol#>
+      annotationItems: self.viewStore.mapItems,
+      annotationContent: { mapItem in
+        MapMarker(coordinate: mapItem.placemark.coordinate)
+      }
     )
     .searchable(
       text: self.viewStore.binding(
@@ -234,6 +242,7 @@ struct ContentView: View {
                 .font(.caption)
             }
           }
+          .buttonStyle(.plain)
         }
       }
     }
