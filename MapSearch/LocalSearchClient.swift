@@ -9,16 +9,20 @@ extension LocalSearchClient {
   static let live = Self(
     search: { completion in
       Effect.future { callback in
-        MKLocalSearch(request: .init(completion: completion))
-          .start { response, error in
-            if let response = response {
-              callback(.success(response))
-            } else if let error = error {
-              callback(.failure(error))
-            } else {
-              fatalError()
-            }
+        
+        // spin up a new async context.
+        // Task is a unit of asynchronous work.
+        // This was introduced in Swift 5 iOS 13+
+        Task {
+          do {
+            let response = try await MKLocalSearch(request: .init(completion: completion))
+              .start()
+            callback(.success(response))
+          } catch {
+            callback(.failure(error))
           }
+        }
+        
       }
     }
   )
