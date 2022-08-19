@@ -82,6 +82,7 @@ enum AppAction {
 struct AppEnvironment {
   var localSearch: LocalSearchClient
   var localSearchCompleter: LocalSearchCompleter
+  var mainQueue: AnySchedulerOf<DispatchQueue>
 }
 
 let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, environment in
@@ -122,6 +123,7 @@ let appReducer = Reducer<AppState, AppAction, AppEnvironment> { state, action, e
   case let .tappedCompletion(completion):
     return environment.localSearch
       .search(completion)
+      .receive(on: environment.mainQueue)
       .catchToEffect()
       .map(AppAction.searchResponse)
   }
@@ -242,7 +244,7 @@ struct ContentView: View {
                 .font(.caption)
             }
           }
-          .buttonStyle(.plain)
+          // .buttonStyle(.plain) // somehow this prevents the suggestions from dismissing when button is tapped.
         }
       }
     }
@@ -263,7 +265,8 @@ struct ContentView_Previews: PreviewProvider {
           reducer: appReducer,
           environment: AppEnvironment(
             localSearch: .live,
-            localSearchCompleter: .live
+            localSearchCompleter: .live,
+            mainQueue: .main
           )
         )
       )

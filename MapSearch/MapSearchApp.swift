@@ -20,7 +20,8 @@ struct MapSearchApp: App {
             reducer: appReducer.debugActions(),
             environment: AppEnvironment(
               localSearch: .live,
-              localSearchCompleter: .live
+              localSearchCompleter: .live,
+              mainQueue: .main
             )
           )
         )
